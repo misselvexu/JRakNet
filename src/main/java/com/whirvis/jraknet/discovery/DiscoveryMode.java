@@ -28,22 +28,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.whirvis.jraknet;
+package com.whirvis.jraknet.discovery;
 
 /**
- * Signals that there is no set listener for the server/client.
+ * Determines how discovery will be handled by the
+ * {@link com.whirvis.jraknet.client.RakNetClient RakNetClient}.
  *
  * @author Trent "Whirvis" Summerlin
+ * @since JRakNet v2.0
+ * @see com.whirvis.jraknet.client.RakNetClient RakNetClient
  */
-public class NoListenerException extends RuntimeException {
-
-	private static final long serialVersionUID = 1841007286123953067L;
+public enum DiscoveryMode {
 
 	/**
-	 * Constructs a <code>NoListenerException</code>.
+	 * The client will not attempt to discover servers.
 	 */
-	public NoListenerException() {
-		super("Listener cannot be null");
-	}
+	DISABLED,
+
+	/**
+	 * Any servers found will appear.
+	 */
+	ALL_CONNECTIONS,
+
+	/**
+	 * Any servers found will appear as long as they have open connections.
+	 */
+	OPEN_CONNECTIONS;
 
 }
