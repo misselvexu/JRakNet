@@ -28,43 +28,71 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.whirvis.jraknet.protocol.login;
+package com.whirvis.jraknet.protocol.connection;
 
 import com.whirvis.jraknet.Packet;
 import com.whirvis.jraknet.RakNetPacket;
-import com.whirvis.jraknet.protocol.MessageIdentifier;
 
+/**
+ * An <code>OPEN_CONNECTION_RESPONSE_1</code> packet.
+ * <p>
+ * This packet is sent by the server to the client after receiving an
+ * {@link OpenConnectionRequestOne OPEN_CONNECTION_REQUEST_1} packet.
+ * 
+ * @author Trent "Whirvis" Summerlin
+ * @since JRakNet v1.0.0
+ */
 public class OpenConnectionResponseOne extends RakNetPacket {
 
-	public static final byte USE_SECURITY_BIT = 0x01;
-
+	/**
+	 * Whether or not the magic bytes read in the packet are valid.
+	 */
 	public boolean magic;
+
+	/**
+	 * The server's globally unique ID.
+	 */
 	public long serverGuid;
+
+	/**
+	 * The server's maximum transfer unit size.
+	 */
 	public int maximumTransferUnit;
 
-	/*
-	 * JRakNet does not support RakNet's built in security function, it is
-	 * poorly documented
+	/**
+	 * Whether or not security should be used. Since JRakNet does not have this
+	 * feature implemented, <code>false</code> will always be the value used
+	 * when sending this value. However, this value can be <code>true</code> if
+	 * it is being set through decoding.
 	 */
-	public boolean useSecurity = false;
+	public boolean useSecurity;
 
+	/**
+	 * Creates a <code>OPEN_CONNECTION_RESPONSE_1</code> packet to be encoded.
+	 * 
+	 * @see #encode()
+	 */
+	public OpenConnectionResponseOne() {
+		super(ID_OPEN_CONNECTION_REPLY_1);
+	}
+
+	/**
+	 * Creates a <code>OPEN_CONNECTION_RESPONSE_1</code> packet to be decoded.
+	 * 
+	 * @param packet
+	 *            the original packet whose data will be read from in the
+	 *            {@link #decode()} method.
+	 */
 	public OpenConnectionResponseOne(Packet packet) {
 		super(packet);
 	}
 
-	public OpenConnectionResponseOne() {
-		super(MessageIdentifier.ID_OPEN_CONNECTION_REPLY_1);
-	}
-
 	@Override
 	public void encode() {
+		this.useSecurity = false; // TODO: Not supported
 		this.writeMagic();
 		this.writeLong(serverGuid);
-
-		// Set security flags
-		byte securityFlags = 0x00;
-		securityFlags |= (useSecurity ? USE_SECURITY_BIT : 0x00);
-		this.writeUnsignedByte(securityFlags);
+		this.writeBoolean(useSecurity);
 		this.writeUnsignedShort(maximumTransferUnit);
 	}
 
@@ -72,12 +100,7 @@ public class OpenConnectionResponseOne extends RakNetPacket {
 	public void decode() {
 		this.magic = this.checkMagic();
 		this.serverGuid = this.readLong();
-
-		byte securityFlags = 0x00;
-		securityFlags |= this.readUnsignedByte(); // Use security
-		if ((securityFlags & USE_SECURITY_BIT) == USE_SECURITY_BIT) {
-			this.useSecurity = true;
-		}
+		this.useSecurity = this.readBoolean();
 		this.maximumTransferUnit = this.readUnsignedShort();
 	}
 

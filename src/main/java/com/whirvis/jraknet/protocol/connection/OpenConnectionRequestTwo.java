@@ -28,42 +28,53 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.whirvis.jraknet.protocol.login;
+package com.whirvis.jraknet.protocol.connection;
 
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 import com.whirvis.jraknet.Packet;
+import com.whirvis.jraknet.RakNetException;
 import com.whirvis.jraknet.RakNetPacket;
+import com.whirvis.jraknet.protocol.ConnectionType;
 import com.whirvis.jraknet.protocol.Failable;
 
 /**
- * A <code>NEW_INCOMING_CONNECTION</code> packet.
+ * An <code>OPEN_CONNECTION_REQUEST_2</code> packet.
  * <p>
- * This is sent by the client after receiving the
- * {@link ConnectionRequestAccepted CONNECTION_REQUEST_ACCEPTED} packet.
+ * This packet is sent by the client to the server after receiving a
+ * {@link OpenConnectionResponseOne OPEN_CONNECTION_RESPONSE_1} packet.
  * 
  * @author Trent "Whirvis" Summerlin
  * @since JRakNet v1.0.0
  */
-public class NewIncomingConnection extends RakNetPacket implements Failable {
-
-	// TODO: Figure out what the unknown addresses are used for
+public class OpenConnectionRequestTwo extends RakNetPacket implements Failable {
 
 	/**
-	 * The server address.
+	 * Whether or not the magic bytes read in the packet are valid.
 	 */
-	public InetSocketAddress serverAddress;
+	public boolean magic;
 
 	/**
-	 * The server timestamp.
+	 * The address of the server that the client wishes to connect to.
 	 */
-	public long serverTimestamp;
+	public InetSocketAddress address;
 
 	/**
-	 * The client timestamp.
+	 * The maximum transfer unit size the client and the server have agreed
+	 * upon.
 	 */
-	public long clientTimestamp;
+	public int maximumTransferUnit;
+
+	/**
+	 * The client's globally unique ID.
+	 */
+	public long clientGuid;
+
+	/**
+	 * The client connection type.
+	 */
+	public ConnectionType connectionType;
 
 	/**
 	 * Whether or not the packet failed to encode/decode.
@@ -71,58 +82,60 @@ public class NewIncomingConnection extends RakNetPacket implements Failable {
 	private boolean failed;
 
 	/**
-	 * Creates a <code>NEW_INCOMING_CONNECTION</code> packet to be encoded.
+	 * Creates an <code>OPEN_CONNECTION_REQUEST_2</code> packet to be encoded.
 	 * 
 	 * @see #encode()
 	 */
-	public NewIncomingConnection() {
-		super(ID_NEW_INCOMING_CONNECTION);
+	public OpenConnectionRequestTwo() {
+		super(ID_OPEN_CONNECTION_REQUEST_2);
 	}
 
 	/**
-	 * Creates a <code>NEW_INCOMING_CONNECTION</code> packet to be decoded.
+	 * Creates an <code>OPEN_CONNECTION_REQUEST_2</code> packet to be decoded.
 	 * 
 	 * @param packet
 	 *            the original packet whose data will be read from in the
 	 *            {@link #decode()} method.
 	 */
-	public NewIncomingConnection(Packet packet) {
+	public OpenConnectionRequestTwo(Packet packet) {
 		super(packet);
 	}
 
 	@Override
 	public void encode() {
 		try {
-			this.writeAddress(serverAddress);
-			for (int i = 0; i < 10; i++) {
-				this.writeAddress("0.0.0.0", 0);
-			}
-			this.writeLong(serverTimestamp);
-			this.writeLong(clientTimestamp);
-		} catch (UnknownHostException e) {
-			this.failed = true;
-			this.serverAddress = null;
-			this.serverTimestamp = 0;
-			this.clientTimestamp = 0;
+			this.writeMagic();
+			this.writeAddress(address);
+			this.writeUnsignedShort(maximumTransferUnit);
+			this.writeLong(clientGuid);
+			this.writeConnectionType(connectionType);
+		} catch (UnknownHostException | RakNetException e) {
+			this.magic = false;
+			this.address = null;
+			this.maximumTransferUnit = 0;
+			this.clientGuid = 0;
+			this.connectionType = null;
 			this.clear();
+			this.failed = true;
 		}
 	}
 
 	@Override
 	public void decode() {
 		try {
-			this.serverAddress = this.readAddress();
-			for (int i = 0; i < 10; i++) {
-				this.readAddress(); // Ignore, unknown use
-			}
-			this.serverTimestamp = this.readLong();
-			this.clientTimestamp = this.readLong();
-		} catch (UnknownHostException e) {
-			this.failed = true;
-			this.serverAddress = null;
-			this.serverTimestamp = 0;
-			this.clientTimestamp = 0;
+			this.magic = this.checkMagic();
+			this.address = this.readAddress();
+			this.maximumTransferUnit = this.readUnsignedShort();
+			this.clientGuid = this.readLong();
+			this.connectionType = this.readConnectionType();
+		} catch (UnknownHostException | RakNetException e) {
+			this.magic = false;
+			this.address = null;
+			this.maximumTransferUnit = 0;
+			this.clientGuid = 0;
+			this.connectionType = null;
 			this.clear();
+			this.failed = true;
 		}
 	}
 
