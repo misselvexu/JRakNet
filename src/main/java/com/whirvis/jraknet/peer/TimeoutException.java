@@ -28,26 +28,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.whirvis.jraknet.session;
-
-import com.whirvis.jraknet.RakNet;
+package com.whirvis.jraknet.peer;
 
 /**
- * Signals that a {@link RakNetSession} has attempted to send too many packets
- * at once.
+ * Signals that a {@link RakNetSession} has timed out.
  *
  * @author Trent "Whirvis" Summerlin
  * @since JRakNet v1.0.0
  */
-public class PacketOverloadException extends RuntimeException {
+public class TimeoutException extends RuntimeException {
 
-	private static final long serialVersionUID = 8544922469731039197L;
+	private static final long serialVersionUID = 4216977972114486611L;
 
 	/**
-	 * Constructs a <code>PacketOverloadException</code>.
+	 * Constructs a <code>TimeoutException</code>.
 	 */
-	public PacketOverloadException() {
-		super("Too many packets (More than " + RakNet.getMaxPacketsPerSecond() + ") were sent within a second");
+	public TimeoutException() {
+		super("Session timeout");
 	}
 
 }

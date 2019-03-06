@@ -28,7 +28,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.whirvis.jraknet.session;
+package com.whirvis.jraknet.peer;
 
 /**
  * Signals that there are too many split packets in the queue at once.
@@ -36,14 +36,14 @@ package com.whirvis.jraknet.session;
  * @author Trent "Whirvis" Summerlin
  * @since JRakNet v1.0.0
  */
-public class SplitQueueOverloadException extends RuntimeException {
+public class SplitQueueOverflowException extends RuntimeException {
 
 	private static final long serialVersionUID = 969985052588965615L;
 
 	/**
 	 * Constructs a <code>SplitQueueOverloadException</code>.
 	 */
-	public SplitQueueOverloadException() {
+	public SplitQueueOverflowException() {
 		super("Too many split packets in a single queue");
 	}
 

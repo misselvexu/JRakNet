@@ -28,7 +28,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.whirvis.jraknet.session;
+package com.whirvis.jraknet.peer;
 
 /**
  * Represents the current status of a connection in a {@link RakNetSession}.
@@ -49,8 +49,8 @@ public enum RakNetState {
 	HANDSHAKING,
 
 	/**
-	 * The session is connected.
+	 * The session is logged in.
 	 */
-	CONNECTED;
+	LOGGED_IN;
 
 }
