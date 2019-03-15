@@ -1,11 +1,11 @@
 /*
- *       _   _____            _      _   _          _
- *      | | |  __ \          | |    | \ | |        | |
- *      | | | |__) |   __ _  | | __ |  \| |   ___  | |_
+ *       _   _____            _      _   _          _   
+ *      | | |  __ \          | |    | \ | |        | |  
+ *      | | | |__) |   __ _  | | __ |  \| |   ___  | |_ 
  *  _   | | |  _  /   / _` | | |/ / | . ` |  / _ \ | __|
- * | |__| | | | \ \  | (_| | |   <  | |\  | |  __/ | |_
+ * | |__| | | | \ \  | (_| | |   <  | |\  | |  __/ | |_ 
  *  \____/  |_|  \_\  \__,_| |_|\_\ |_| \_|  \___|  \__|
- *
+ *                                                  
  * the MIT License (MIT)
  *
  * Copyright (c) 2016-2019 Trent "Whirvis" Summerlin
@@ -26,57 +26,48 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * SOFTWARE.  
  */
-package com.whirvis.jraknet.client;
+package com.whirvis.jraknet.client.peer;
 
-import com.whirvis.jraknet.RakNetException;
+import java.net.InetSocketAddress;
+
+import com.whirvis.jraknet.client.RakNetClient;
 
 /**
- * Signals that an error has occurred in a {@link RakNetClient}
+ * Signals that a {@link RakNetClient} attempted to connect to a server that has
+ * no free incoming connections.
  *
  * @author Trent "Whirvis" Summerlin
  * @since JRakNet v2.0
  */
-public class RakNetClientException extends RakNetException {
+public class NoFreeIncomingConnectionsException extends PeerFactoryException {
 
-	private static final long serialVersionUID = 2441122006497992080L;
+	private static final long serialVersionUID = 5863972657532782029L;
 
-	private final RakNetClient client;
+	private final InetSocketAddress address;
 
 	/**
-	 * Constructs a <code>RakNetClientException</code>.
+	 * Constructs a <code>NoFreeIncomingConnectionsException</code>.
 	 * 
 	 * @param client
-	 *            the client that threw the exception.
-	 * @param error
-	 *            the detail message.
+	 *            the client that attempted to a server with no free incoming
+	 *            connections.
+	 * @param address
+	 *            the address of the server with no free incoming connections.
 	 */
-	public RakNetClientException(RakNetClient client, String error) {
-		super(error);
-		this.client = client;
+	public NoFreeIncomingConnectionsException(RakNetClient client, InetSocketAddress address) {
+		super(client, "Server has no free incoming connections");
+		this.address = address;
 	}
 
 	/**
-	 * Constructs a <code>RakNetClientException</code>.
+	 * Returns the address of the server that has no free incoming connections.
 	 * 
-	 * @param client
-	 *            the client that threw the exception.
-	 * @param error
-	 *            the <code>Throwable</code> that was thrown.
+	 * @return the address of the server that has no free incoming connections.
 	 */
-	public RakNetClientException(RakNetClient client, Throwable error) {
-		super(error);
-		this.client = client;
-	}
-
-	/**
-	 * Returns the client that threw the exception.
-	 * 
-	 * @return the client that threw the exception.
-	 */
-	public final RakNetClient getClient() {
-		return this.client;
+	public InetSocketAddress getAddress() {
+		return this.address;
 	}
 
 }

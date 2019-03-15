@@ -28,40 +28,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.whirvis.jraknet.client;
+package com.whirvis.jraknet.client.peer;
 
 import java.net.InetSocketAddress;
 
+import com.whirvis.jraknet.client.RakNetClient;
+
 /**
- * Signals that a {@link RakNetClient} attempted to to connect to an offline
- * server.
+ * Signals that a {@link RakNetClient} has attempted to connect to a server that
+ * has banned its connection.
  *
  * @author Trent "Whirvis" Summerlin
  * @since JRakNet v2.0
  */
-public class ServerOfflineException extends RakNetClientException {
+public class ConnectionBannedException extends PeerFactoryException {
 
-	private static final long serialVersionUID = -3916155995964791602L;
+	private static final long serialVersionUID = 8440218445920818619L;
 
 	private final InetSocketAddress address;
 
 	/**
-	 * Constructs a <code>ServerOfflineException</code>.
+	 * Constructs a <code>ConnectedionBannedException</code>.
 	 * 
 	 * @param client
-	 *            the client that attempted to the offline server.
+	 *            the client that is banned.
 	 * @param address
-	 *            the address of the offline server.
+	 *            the address of the server that banned the client's connection.
 	 */
-	public ServerOfflineException(RakNetClient client, InetSocketAddress address) {
-		super(client, "Server at address " + address.toString() + " is offline");
+	public ConnectionBannedException(RakNetClient client, InetSocketAddress address) {
+		super(client, "Connection banned");
 		this.address = address;
 	}
 
 	/**
-	 * Returns the address of the offline server.
+	 * Returns the address of the server that banned the client's connection.
 	 * 
-	 * @return the address of the offline server.
+	 * @return the address of the server that banned the client's connection.
 	 */
 	public InetSocketAddress getAddress() {
 		return this.address;

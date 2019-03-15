@@ -29,10 +29,12 @@
  * SOFTWARE.
  */
 /**
- * The packets that are sent between the server and client during initial
- * connection.
+ * Components used by the {@link com.whirvis.jraknet.client.RakNetClient
+ * RakNetClient} in order to more easily establish connections with servers
+ * using the {@link com.whirvis.jraknet.client.peer.PeerFactory PeerFactory}
+ * class.
  * 
  * @author Trent "Whirvis" Summerlin
  * @since JRakNet v1.0.0
  */
-package com.whirvis.jraknet.protocol.connection;
+package com.whirvis.jraknet.client.peer;
